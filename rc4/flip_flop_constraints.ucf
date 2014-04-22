@@ -1,0 +1,4 @@
+NET "DATA_IN" LOC = "T10";
+NET "DATA_OUT" LOC = "U16";
+
+NET "CLK" LOC = "C9";

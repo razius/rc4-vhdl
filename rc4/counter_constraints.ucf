@@ -1,0 +1,10 @@
+NET "COUNT(0)" LOC = "U16";
+NET "COUNT(1)" LOC = "V16";
+NET "COUNT(2)" LOC = "U15";
+NET "COUNT(3)" LOC = "V15";
+NET "COUNT(4)" LOC = "M11";
+NET "COUNT(5)" LOC = "N11";
+NET "COUNT(6)" LOC = "R11";
+NET "COUNT(7)" LOC = "T11";
+
+NET "CLK" LOC = "H2";
