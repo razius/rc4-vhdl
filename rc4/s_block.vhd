@@ -34,7 +34,7 @@ entity s_block is
 		CLK: in STD_LOGIC;
 		RST: in STD_LOGIC;
 		INDEX: in STD_LOGIC_VECTOR (7 downto 0);
-		VALUE: in STD_LOGIC_VECTOR (7 downto 0)
+		VALUE: out STD_LOGIC_VECTOR (7 downto 0)
 	);
 end s_block;
 
