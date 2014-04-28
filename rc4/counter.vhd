@@ -36,7 +36,8 @@ entity counter is
 	Generic ( size: integer :=8);
 	Port (CLK: in STD_LOGIC;
 			RST: in STD_LOGIC;
-			COUNT: out STD_LOGIC_VECTOR (size-1 downto 0)
+			COUNT: out STD_LOGIC_VECTOR (size-1 downto 0);
+			OVERFLOW: OUT STD_LOGIC
 			);
 end counter;
 
@@ -49,6 +50,11 @@ begin
 			tmp <= (others => '0');
 		elsif (CLK = '1') then
 			tmp <= tmp + 1;
+			if (tmp = (size-1 downto 0 => '1')) then
+				OVERFLOW <= '1';
+			else
+				OVERFLOW <= '0';
+			end if;
 		end if;
 	end process;
 	COUNT <= tmp;

@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   23:15:32 04/28/2014
+-- Create Date:   23:45:36 04/28/2014
 -- Design Name:   
--- Module Name:   Z:/workspace/school/Sem6/DES/Handin/code/rc4/counter_testbench.vhd
+-- Module Name:   Z:/workspace/school/Sem6/DES/Handin/code/rc4/s_block_testbench.vhd
 -- Project Name:  rc4
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: counter
+-- VHDL Test Bench Created by ISE for module: s_block
 -- 
 -- Dependencies:
 -- 
@@ -32,19 +32,19 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY counter_testbench IS
-END counter_testbench;
+ENTITY s_block_testbench IS
+END s_block_testbench;
  
-ARCHITECTURE behavior OF counter_testbench IS 
+ARCHITECTURE behavior OF s_block_testbench IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT counter
+    COMPONENT s_block
     PORT(
          CLK : IN  std_logic;
          RST : IN  std_logic;
-         COUNT : OUT  std_logic_vector(7 downto 0);
-         OVERFLOW : OUT  std_logic
+         INDEX : IN  std_logic_vector(7 downto 0);
+         VALUE : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
@@ -52,10 +52,10 @@ ARCHITECTURE behavior OF counter_testbench IS
    --Inputs
    signal CLK : std_logic := '0';
    signal RST : std_logic := '0';
+   signal INDEX : std_logic_vector(7 downto 0) := (others => '0');
 
  	--Outputs
-   signal COUNT : std_logic_vector(7 downto 0);
-   signal OVERFLOW : std_logic;
+   signal VALUE : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
    constant CLK_period : time := 10 ns;
@@ -63,11 +63,11 @@ ARCHITECTURE behavior OF counter_testbench IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: counter PORT MAP (
+   uut: s_block PORT MAP (
           CLK => CLK,
           RST => RST,
-          COUNT => COUNT,
-          OVERFLOW => OVERFLOW
+          INDEX => INDEX,
+          VALUE => VALUE
         );
 
    -- Clock process definitions
@@ -92,6 +92,7 @@ BEGIN
 
 		RST <= '0';
 
+		INDEX <= (7 downto 1 => '0', others => '1');
       -- insert stimulus here 
 
       wait;
