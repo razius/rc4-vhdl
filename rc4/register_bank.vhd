@@ -37,7 +37,8 @@ entity register_bank is
 			DATA_OUT: out STD_LOGIC_VECTOR (cell_width-1 downto 0);
 			READ_ADDR: in STD_LOGIC_VECTOR (addr_width-1 downto 0); 
 			WRITE_ADDR: in STD_LOGIC_VECTOR (addr_width-1 downto 0);
-			CLK: in  STD_LOGIC);
+			CLK: in  STD_LOGIC;
+			RST : in STD_LOGIC);
 end register_bank;
 
 architecture Behavioral of register_bank is
@@ -61,7 +62,8 @@ architecture Behavioral of register_bank is
 		Generic ( width: integer :=cell_width);
 		Port (DATA_IN : in  STD_LOGIC_VECTOR ((width - 1) downto 0);
 				DATA_OUT: out STD_LOGIC_VECTOR ((width - 1) downto 0);
-				CLK : in  STD_LOGIC);
+				CLK : in  STD_LOGIC;
+				RST : in STD_LOGIC);
 	end component;
 begin
 	ab: address_decoder port map(
@@ -78,7 +80,8 @@ begin
 			rc: register_cell port map(
 				DATA_IN => DATA_IN,
 				DATA_OUT => register_cells_out(i),
-				CLK => is_clocked(i)
+				CLK => is_clocked(i),
+				RST => RST
 			);
 			DATA_OUT <= register_cells_out(i) when (read_addr_decoded(i) = '1') else (cell_width-1 downto 0 => 'Z');
 	  end generate;   

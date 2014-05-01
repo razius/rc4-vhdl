@@ -31,6 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity flip_flop is
     Port ( CLK : in  STD_LOGIC;
+			  RST : in STD_LOGIC;
 			  DATA_IN : in  STD_LOGIC;
            DATA_OUT : out  STD_LOGIC);
 end flip_flop;
@@ -38,13 +39,12 @@ end flip_flop;
 architecture Behavioral of flip_flop is
 
 begin
-	process (CLK) is
+	process (CLK, RST) is
 	begin
-		if (DATA_IN = 'U') then
+		if (RST = '1') then
 			DATA_OUT <= '0';
 		elsif rising_edge(CLK) then
 			DATA_OUT <= DATA_IN;
 		end if;
 	end process;	
 end Behavioral;
-

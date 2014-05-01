@@ -33,6 +33,7 @@ entity accumulator is
 	Generic ( size: integer :=8);
 	Port (
 		CLK: in STD_LOGIC;
+		RST: in STD_LOGIC;
 		DATA_IN: in STD_LOGIC_VECTOR (size-1 downto 0);
 		DATA_OUT: out STD_LOGIC_VECTOR (size-1 downto 0);
 		CARRY: out STD_LOGIC
@@ -53,7 +54,8 @@ architecture Behavioral of accumulator is
 		Generic ( width: integer :=size);
 		Port (DATA_IN : in  STD_LOGIC_VECTOR ((width - 1) downto 0);
 				DATA_OUT: out STD_LOGIC_VECTOR ((width - 1) downto 0);
-				CLK : in  STD_LOGIC);
+				CLK : in  STD_LOGIC;
+				RST: in STD_LOGIC);
 	end component;
 
 	signal rc_in, rc_out: STD_LOGIC_VECTOR (size-1 downto 0) := (size-1 downto 0 => '0');
@@ -70,7 +72,8 @@ begin
 	result_cell: register_cell port map (
 		DATA_IN => rc_in,
 		DATA_OUT => rc_out,
-		CLK => CLK
+		CLK => CLK,
+		RST => RST
 	);
 
 	DATA_OUT <= rc_out;

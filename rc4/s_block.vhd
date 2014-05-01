@@ -56,11 +56,13 @@ architecture Behavioral of s_block is
 				DATA_OUT: out STD_LOGIC_VECTOR (cell_width-1 downto 0);
 				READ_ADDR: in STD_LOGIC_VECTOR (addr_width-1 downto 0); 
 				WRITE_ADDR: in STD_LOGIC_VECTOR (addr_width-1 downto 0);
-				CLK: in  STD_LOGIC);
+				CLK: in  STD_LOGIC;
+				RST: in STD_LOGIC);
 	end component;
 
 	component flip_flop is
 		 Port ( CLK : in  STD_LOGIC;
+				  RST : in STD_LOGIC;
 				  DATA_IN : in  STD_LOGIC;
 				  DATA_OUT : out  STD_LOGIC);
 	end component;
@@ -69,13 +71,12 @@ architecture Behavioral of s_block is
 		Generic ( size: integer :=8);
 		Port (
 			CLK: in STD_LOGIC;
+			RST: in STD_LOGIC;
 			DATA_IN: in STD_LOGIC_VECTOR (size-1 downto 0);
 			DATA_OUT: out STD_LOGIC_VECTOR (size-1 downto 0);
 			CARRY: out STD_LOGIC
 		);
 	end component;
-
-	signal clock: STD_LOGIC;
 
 	signal counter_value: STD_LOGIC_VECTOR (7 downto 0);
 	signal counter_overflow: STD_LOGIC;
@@ -88,43 +89,43 @@ architecture Behavioral of s_block is
 
 
 begin
-	clock <= CLK;
-
 	ct: counter port map(
-		CLK => clock,
+		CLK => CLK,
 		RST => RST,
 		COUNT => counter_value,
 		OVERFLOW => counter_overflow
 	);
 	
 	--
-	
-	i_clock <= clock and not i_initialized;
 
 	i_rb: register_bank port map(
 		DATA_IN => counter_value,
 		DATA_OUT => i_value,
 		READ_ADDR => i_index,
 		WRITE_ADDR => counter_value,
-		CLK => i_clock  
+		CLK => CLK and not i_initialized,
+		RST => RST
 	);
 	
 	i_fp: flip_flop port map(
 		CLK => counter_overflow,
+		RST => RST,
 		DATA_IN => '1',
 		DATA_OUT => i_initialized
 	);
 		
+	i_index <= counter_value;
+
 	--
 
 	acc: accumulator port map(
-		CLK => clock and i_initialized,
+		CLK => CLK and i_initialized,
+		RST => RST,
 		DATA_IN => i_value,
 		DATA_OUT => acc_value,
 		CARRY => open
 	);
 	
-	i_index <= INDEX;
-	VALUE <= i_value;
+	VALUE <= acc_value;
 	
 end Behavioral;

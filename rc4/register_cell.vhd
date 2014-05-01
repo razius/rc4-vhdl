@@ -33,7 +33,8 @@ entity register_cell is
 	 Generic ( width: integer :=8);
     Port ( DATA_IN : in  STD_LOGIC_VECTOR (width-1 downto 0);
 			  DATA_OUT: out STD_LOGIC_VECTOR (width-1 downto 0);
-			  CLK : in  STD_LOGIC);
+			  CLK : in  STD_LOGIC;
+			  RST : in STD_LOGIC);
 end register_cell;
 
 architecture Behavioral of register_cell is
@@ -41,6 +42,7 @@ architecture Behavioral of register_cell is
 	component flip_flop
 		port(
 			CLK: in STD_LOGIC;
+			RST : in STD_LOGIC;
 			DATA_IN: in STD_LOGIC;
 			DATA_OUT: out STD_LOGIC
 		);
@@ -49,7 +51,12 @@ architecture Behavioral of register_cell is
 begin
 	gen:
 		for index in width-1 downto 0 generate
-			fp: flip_flop port map(CLK, DATA_IN(index), DATA_OUT(index));
+			fp: flip_flop port map(
+				CLK => CLK,
+				RST => RST,
+				DATA_IN => DATA_IN(index),
+				DATA_OUT => DATA_OUT(index)
+			);
 		end generate;
 end Behavioral;
 
