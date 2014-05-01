@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    18:01:21 04/21/2014 
+-- Create Date:    21:43:23 04/30/2014 
 -- Design Name: 
--- Module Name:    flip_flop - Behavioral 
+-- Module Name:    full_adder - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,22 +29,29 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity flip_flop is
-    Port ( CLK : in  STD_LOGIC;
-			  DATA_IN : in  STD_LOGIC;
-           DATA_OUT : out  STD_LOGIC);
-end flip_flop;
+entity full_adder is
+    Port ( X : in STD_LOGIC;
+           Y : in STD_LOGIC;
+			  CARRY_IN: in STD_LOGIC;
+           SUM : out STD_LOGIC;
+           CARRY_OUT : out STD_LOGIC);
+end full_adder;
 
-architecture Behavioral of flip_flop is
+architecture Behavioral of full_adder is
+	signal h1_sum_out, h1_carry_out, h2_carry_out: STD_LOGIC;
+	
+	component half_adder
+		port(
+				X: in STD_LOGIC;
+				Y: in STD_LOGIC;
+				SUM: out STD_LOGIC;
+				CARRY: out STD_LOGIC
+				);
+	end component;
 
 begin
-	process (CLK) is
-	begin
-		if (DATA_IN = 'U') then
-			DATA_OUT <= '0';
-		elsif rising_edge(CLK) then
-			DATA_OUT <= DATA_IN;
-		end if;
-	end process;	
-end Behavioral;
+	h1: half_adder port map(X, Y, h1_sum_out, h1_carry_out);
+	h2: half_adder port map(h1_sum_out, CARRY_IN, SUM, h2_carry_out);
 
+	CARRY_OUT <= h1_carry_out or h2_carry_out;
+end Behavioral;

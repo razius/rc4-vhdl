@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    18:01:21 04/21/2014 
+-- Create Date:    21:41:08 04/30/2014 
 -- Design Name: 
--- Module Name:    flip_flop - Behavioral 
+-- Module Name:    half_adder - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -29,22 +29,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity flip_flop is
-    Port ( CLK : in  STD_LOGIC;
-			  DATA_IN : in  STD_LOGIC;
-           DATA_OUT : out  STD_LOGIC);
-end flip_flop;
+entity half_adder is
+    Port ( X : in  STD_LOGIC;
+           Y : in   STD_LOGIC;
+           SUM : out  STD_LOGIC;
+           CARRY : out  STD_LOGIC);
+end half_adder;
 
-architecture Behavioral of flip_flop is
+architecture Behavioral of half_adder is
 
 begin
-	process (CLK) is
-	begin
-		if (DATA_IN = 'U') then
-			DATA_OUT <= '0';
-		elsif rising_edge(CLK) then
-			DATA_OUT <= DATA_IN;
-		end if;
-	end process;	
-end Behavioral;
 
+	SUM <= X xor Y;
+	CARRY <= X and Y;
+
+end Behavioral;

@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   23:45:40 04/30/2014
+-- Create Date:   22:50:59 04/30/2014
 -- Design Name:   
--- Module Name:   Z:/workspace/school/Sem6/DES/Handin/code/rc4/s_block_testbench.vhd
+-- Module Name:   Z:/workspace/school/Sem6/DES/Handin/code/rc4/accumulator_testbench.vhd
 -- Project Name:  rc4
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: s_block
+-- VHDL Test Bench Created by ISE for module: accumulator
 -- 
 -- Dependencies:
 -- 
@@ -32,30 +32,30 @@ USE ieee.std_logic_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 --USE ieee.numeric_std.ALL;
  
-ENTITY s_block_testbench IS
-END s_block_testbench;
+ENTITY accumulator_testbench IS
+END accumulator_testbench;
  
-ARCHITECTURE behavior OF s_block_testbench IS 
+ARCHITECTURE behavior OF accumulator_testbench IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT s_block
+    COMPONENT accumulator
     PORT(
          CLK : IN  std_logic;
-         RST : IN  std_logic;
-         INDEX : IN  std_logic_vector(7 downto 0);
-         VALUE : OUT  std_logic_vector(7 downto 0)
+         DATA_IN : IN  std_logic_vector(7 downto 0);
+         DATA_OUT : OUT  std_logic_vector(7 downto 0);
+         CARRY : OUT  std_logic
         );
     END COMPONENT;
     
 
    --Inputs
    signal CLK : std_logic := '0';
-   signal RST : std_logic := '0';
-   signal INDEX : std_logic_vector(7 downto 0) := (others => '0');
+   signal DATA_IN : std_logic_vector(7 downto 0) := (others => '0');
 
  	--Outputs
-   signal VALUE : std_logic_vector(7 downto 0);
+   signal DATA_OUT : std_logic_vector(7 downto 0);
+   signal CARRY : std_logic;
 
    -- Clock period definitions
    constant CLK_period : time := 10 ns;
@@ -63,11 +63,11 @@ ARCHITECTURE behavior OF s_block_testbench IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: s_block PORT MAP (
+   uut: accumulator PORT MAP (
           CLK => CLK,
-          RST => RST,
-          INDEX => INDEX,
-          VALUE => VALUE
+          DATA_IN => DATA_IN,
+          DATA_OUT => DATA_OUT,
+          CARRY => CARRY
         );
 
    -- Clock process definitions
@@ -86,14 +86,11 @@ BEGIN
       -- hold reset state for 100 ns.
       wait for 100 ns;	
 
-		RST <= '1';
-
       wait for CLK_period*10;
 
-		RST <= '0';
-
-		INDEX <= (7 downto 1 => '0', others => '1');
       -- insert stimulus here 
+
+		DATA_IN <= (7 downto 1 => '0', others => '1');
 
       wait;
    end process;
