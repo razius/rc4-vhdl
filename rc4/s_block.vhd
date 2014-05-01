@@ -34,6 +34,7 @@ entity s_block is
 		CLK: in STD_LOGIC;
 		RST: in STD_LOGIC;
 		INDEX: in STD_LOGIC_VECTOR (7 downto 0);
+		READY: out STD_LOGIC;
 		VALUE: out STD_LOGIC_VECTOR (7 downto 0)
 	);
 end s_block;
@@ -78,6 +79,14 @@ architecture Behavioral of s_block is
 		);
 	end component;
 
+	component alu is
+		 Generic ( size: integer :=8);
+		 Port ( X : in  STD_LOGIC_VECTOR (size-1 downto 0);
+				  Y : in  STD_LOGIC_VECTOR (size-1 downto 0);
+				  SUM : out  STD_LOGIC_VECTOR (size-1 downto 0);
+				  CARRY : out STD_LOGIC);
+	end component;
+
 	signal counter_value: STD_LOGIC_VECTOR (7 downto 0);
 	signal counter_overflow: STD_LOGIC;
 	
@@ -85,8 +94,10 @@ architecture Behavioral of s_block is
 	signal i_index, i_value: STD_LOGIC_VECTOR (7 downto 0);
 
 	signal j_initialized: STD_LOGIC;
-	signal j_2index, j_value, acc_value: STD_LOGIC_VECTOR (7 downto 0);
+	signal j_index, j_value, i_plus_k, acc_value: STD_LOGIC_VECTOR (7 downto 0);
 
+	signal t_initialized: STD_LOGIC;
+	signal t_index, t_value: STD_LOGIC_VECTOR (7 downto 0);
 
 begin
 	ct: counter port map(
@@ -114,18 +125,61 @@ begin
 		DATA_OUT => i_initialized
 	);
 		
-	i_index <= counter_value;
+	i_index <= counter_value WHEN j_initialized = '0' ELSE j_value;
 
 	--
 
+	al: alu port map(
+		X => i_value,
+		Y => (7 downto 0 => '1' ), -- k_value
+		SUM => i_plus_k,
+		CARRY => open
+	);
+	
 	acc: accumulator port map(
 		CLK => CLK and i_initialized,
 		RST => RST,
-		DATA_IN => i_value,
+		DATA_IN => i_plus_k,
 		DATA_OUT => acc_value,
 		CARRY => open
 	);
 	
-	VALUE <= acc_value;
+	j_rb: register_bank port map(
+		DATA_IN => acc_value,
+		DATA_OUT => j_value,
+		READ_ADDR => j_index,
+		WRITE_ADDR => counter_value,
+		CLK => CLK and i_initialized,
+		RST => RST
+	);
+	
+	j_fp: flip_flop port map(
+		CLK => counter_overflow and i_initialized,
+		RST => RST,
+		DATA_IN => '1',
+		DATA_OUT => j_initialized
+	);
+	
+	--
+		
+	t_rb: register_bank port map(
+		DATA_IN => i_value,
+		DATA_OUT => t_value,
+		READ_ADDR => t_index,
+		WRITE_ADDR => counter_value,
+		CLK => CLK and j_initialized,
+		RST => RST
+	);
+
+	t_fp: flip_flop port map(
+		CLK => counter_overflow and j_initialized,
+		RST => RST,
+		DATA_IN => '1',
+		DATA_OUT => t_initialized
+	);
+
+	t_index <= INDEX;
+	READY <= t_initialized;
+	VALUE <= t_value;
 	
 end Behavioral;

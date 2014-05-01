@@ -31,7 +31,9 @@ use IEEE.STD_LOGIC_SIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity key is
-       port (KEY_OUT : out STD_LOGIC_VECTOR (2048 downto 0));
+       port (
+			KEY_OUT : out STD_LOGIC_VECTOR (2048 downto 0)
+		);
 end key;
 
 architecture Behavioral of  key is
