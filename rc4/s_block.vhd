@@ -25,7 +25,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
+-- any Xilinx primitives in this code.2
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
@@ -40,15 +40,6 @@ entity s_block is
 end s_block;
 
 architecture Behavioral of s_block is
-	component counter is
-		Generic ( size: integer :=8);
-		Port (CLK: in STD_LOGIC;
-				RST: in STD_LOGIC;
-				COUNT: out STD_LOGIC_VECTOR (size-1 downto 0);
-				OVERFLOW: OUT STD_LOGIC
-				);
-	end component;
-
 	component register_bank is
 		Generic ( cell_width: integer :=8; -- the width in bits of a register cell
 					 cell_no: integer :=256; -- the total number of register cells
@@ -100,11 +91,12 @@ architecture Behavioral of s_block is
 	signal t_index, t_value: STD_LOGIC_VECTOR (7 downto 0);
 
 begin
-	ct: counter port map(
+	counter: accumulator port map(
 		CLK => CLK,
 		RST => RST,
-		COUNT => counter_value,
-		OVERFLOW => counter_overflow
+		DATA_IN => (size-1 downto 0);
+		DATA_OUT => counter_value,
+		CARRY => counter_overflow
 	);
 	
 	--
@@ -125,61 +117,6 @@ begin
 		DATA_OUT => i_initialized
 	);
 		
-	i_index <= counter_value WHEN j_initialized = '0' ELSE j_value;
-
-	--
-
-	al: alu port map(
-		X => i_value,
-		Y => (7 downto 0 => '1' ), -- k_value
-		SUM => i_plus_k,
-		CARRY => open
-	);
 	
-	acc: accumulator port map(
-		CLK => CLK and i_initialized,
-		RST => RST,
-		DATA_IN => i_plus_k,
-		DATA_OUT => acc_value,
-		CARRY => open
-	);
-	
-	j_rb: register_bank port map(
-		DATA_IN => acc_value,
-		DATA_OUT => j_value,
-		READ_ADDR => j_index,
-		WRITE_ADDR => counter_value,
-		CLK => CLK and i_initialized,
-		RST => RST
-	);
-	
-	j_fp: flip_flop port map(
-		CLK => counter_overflow and i_initialized,
-		RST => RST,
-		DATA_IN => '1',
-		DATA_OUT => j_initialized
-	);
-	
-	--
 		
-	t_rb: register_bank port map(
-		DATA_IN => i_value,
-		DATA_OUT => t_value,
-		READ_ADDR => t_index,
-		WRITE_ADDR => counter_value,
-		CLK => CLK and j_initialized,
-		RST => RST
-	);
-
-	t_fp: flip_flop port map(
-		CLK => counter_overflow and j_initialized,
-		RST => RST,
-		DATA_IN => '1',
-		DATA_OUT => t_initialized
-	);
-
-	t_index <= INDEX;
-	READY <= t_initialized;
-	VALUE <= t_value;
-	
 end Behavioral;
